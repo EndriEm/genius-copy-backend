@@ -6,6 +6,32 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = "file:./data.db"
+}
+
+
+model Genre {
+  id       Int       @id @default(autoincrement())
+  name     String
+  songs Song[]
+  
+}
+model Song {
+  id      Int     @id @default(autoincrement())
+  title   String
+  image   String?
+  source  String?
+  Genre  Genre @relation(fields:[genreId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  genreId Int
+  user User[]
+}
+
+
+model User {
+  id Int @id @default(autoincrement())
+  name String
+  email String @unique
+  password String
+  song Song[]
 }
