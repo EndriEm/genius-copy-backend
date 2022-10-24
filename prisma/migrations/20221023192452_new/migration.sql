@@ -10,8 +10,8 @@ CREATE TABLE "Song" (
     "title" TEXT NOT NULL,
     "image" TEXT,
     "source" TEXT,
-    "genreId" INTEGER NOT NULL,
-    CONSTRAINT "Song_genreId_fkey" FOREIGN KEY ("genreId") REFERENCES "Genre" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "lyrics" TEXT,
+    "liked" BOOLEAN
 );
 
 -- CreateTable
@@ -20,6 +20,14 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "_GenreToSong" (
+    "A" INTEGER NOT NULL,
+    "B" INTEGER NOT NULL,
+    CONSTRAINT "_GenreToSong_A_fkey" FOREIGN KEY ("A") REFERENCES "Genre" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "_GenreToSong_B_fkey" FOREIGN KEY ("B") REFERENCES "Song" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -32,6 +40,12 @@ CREATE TABLE "_SongToUser" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "_GenreToSong_AB_unique" ON "_GenreToSong"("A", "B");
+
+-- CreateIndex
+CREATE INDEX "_GenreToSong_B_index" ON "_GenreToSong"("B");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "_SongToUser_AB_unique" ON "_SongToUser"("A", "B");

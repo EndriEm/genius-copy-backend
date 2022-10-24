@@ -28,9 +28,31 @@ async function getCurrentUser(token: string) {
   const user = await prisma.user.findUnique({
     // @ts-ignore
     where: { id: decryptedInfo.id },
+    include: { song: true },
   });
   return user;
 }
+
+
+app.get("/users", async (req, res) => {
+  const users = await prisma.user.findMany({
+    include: { song: true },
+  });
+  res.send(users);
+});
+
+
+app.get("/user", async (req, res) => {
+  try {
+    //@ts-ignore
+    const user = await getCurrentUser(req.headers.authorization);
+    //@ts-ignore
+    res.send(user);
+  } catch (error) {
+    //@ts-ignore
+    res.status(400).send({ error: error.message });
+  }
+});
 
 app.get("/genres", async (req, res) => {
   try {
@@ -66,6 +88,19 @@ app.get("/songs", async (req, res) => {
   try {
     const songs = await prisma.song.findMany({});
     res.send(songs);
+  } catch (error) {
+    //@ts-ignore
+    res.status(400).send({ error: error.message });
+  }
+});
+
+
+app.get("/songs", async (req, res) => {
+  try {
+    //@ts-ignore
+    const user = await getCurrentUser(req.headers.authorization);
+    //@ts-ignore
+    res.send(user?.song);
   } catch (error) {
     //@ts-ignore
     res.status(400).send({ error: error.message });
@@ -143,3 +178,6 @@ app.get("/songs/:id", async (req, res) => {
   });
   
   app.listen(port);
+
+
+
